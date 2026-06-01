@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventra AI - Smart Event Management Dashboard</title>
+  
+  <!-- Tailwind CSS is bypassed in favor of Vanilla CSS in styles.css -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Chart.js CDN for modern interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Ambient Glow Effects (Decorative Background Elements) -->
+  <div style="position: fixed; width: 400px; height: 400px; background: rgba(168, 85, 247, 0.15); border-radius: 50%; filter: blur(120px); top: -100px; left: -100px; z-index: -1; pointer-events: none;"></div>
+  <div style="position: fixed; width: 500px; height: 500px; background: rgba(59, 130, 246, 0.12); border-radius: 50%; filter: blur(150px); bottom: -150px; right: -100px; z-index: -1; pointer-events: none;"></div>
+
+  <div class="app-container">
+    
+    <!-- LEFT SIDEBAR NAVIGATION -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="brand-logo" id="app-logo">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Eventra AI</span>
+        </div>
+        <p class="brand-tagline">Plan Smart. Create Unforgettable Moments.</p>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-item">
+          <a class="nav-link active" data-view="dashboard" id="nav-dashboard">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Dashboard Overview</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="events" id="nav-events">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Event Management</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="guests" id="nav-guests">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Guest Management</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="bookings" id="nav-bookings">
+            <i class="fa-solid fa-bookmark"></i>
+            <span>Booking Management</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="vendors" id="nav-vendors">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Vendor Management</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="budget" id="nav-budget">
+            <i class="fa-solid fa-coins"></i>
+            <span>Budget Tracking</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="schedule" id="nav-schedule">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Schedule Planner</span>
+          </a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-link" data-view="reports" id="nav-reports">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Reports Section</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">EA</div>
+          <div class="user-info">
+            <span class="user-name">Event Master</span>
+            <span class="user-role">AI Lead Planner</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="main-content">
+      
+      <!-- TOP HEADER BAR -->
+      <header class="main-header">
+        <div class="header-title-area">
+          <h1 id="page-title">Dashboard Overview</h1>
+          <p id="page-subtitle">Your event status at a glance.</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="btn-create-event-header">
+            <i class="fa-solid fa-plus"></i> Create Event
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW PANELS -->
+
+      <!-- 1. DASHBOARD OVERVIEW -->
+      <section class="view-panel active" id="panel-dashboard">
+        <!-- Dashboard Overview Cards -->
+        <div class="dashboard-grid">
+          <div class="card stat-card blue" id="card-stat-events">
+            <div class="stat-header">
+              <span class="stat-title">Total Events</span>
+              <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            </div>
+            <div class="stat-value" id="stat-total-events">0</div>
+            <div class="stat-meta"><span id="stat-sub-events">Active planning</span></div>
+          </div>
+          
+          <div class="card stat-card pink" id="card-stat-upcoming">
+            <div class="stat-header">
+              <span class="stat-title">Upcoming</span>
+              <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+            </div>
+            <div class="stat-value" id="stat-upcoming-events">0</div>
+            <div class="stat-meta"><span id="stat-sub-upcoming">Scheduled days</span></div>
+          </div>
+          
+          <div class="card stat-card yellow" id="card-stat-pending">
+            <div class="stat-header">
+              <span class="stat-title">Pending Bookings</span>
+              <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+            </div>
+            <div class="stat-value" id="stat-pending-bookings">0</div>
+            <div class="stat-meta warning"><i class="fa-solid fa-circle-exclamation"></i> <span id="stat-sub-bookings">Action required</span></div>
+          </div>
+          
+          <div class="card stat-card green" id="card-stat-revenue">
+            <div class="stat-header">
+              <span class="stat-title">Total Budget Vol.</span>
+              <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+            </div>
+            <div class="stat-value" id="stat-total-revenue">$0</div>
+            <div class="stat-meta positive"><i class="fa-solid fa-circle-up"></i> <span id="stat-sub-revenue">Value managed</span></div>
+          </div>
+          
+          <div class="card stat-card purple" id="card-stat-guests">
+            <div class="stat-header">
+              <span class="stat-title">Guest Count</span>
+              <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="stat-value" id="stat-total-guests">0</div>
+            <div class="stat-meta"><span id="stat-sub-guests">Confirmed RSVPs</span></div>
+          </div>
+        </div>
+
+        <!-- Dashboard Widgets Row -->
+        <div class="dashboard-sections-grid">
+          <!-- Left Column: Upcoming Events & Mini Feed -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card">
+              <div class="section-header-compact">
+                <h3>Live Event Timelines</h3>
+                <button class="btn btn-secondary btn-sm" id="btn-dashboard-view-all-events">View All</button>
+              </div>
+              <div class="events-mini-list" id="dashboard-events-list">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="section-header-compact">
+                <h3>Recent Operational Logs</h3>
+              </div>
+              <div class="activity-feed" id="dashboard-activity-feed">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: AI Suggestion & Planner Tips -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card ai-tip-card">
+              <div class="ai-tip-header">
+                <span class="ai-badge">AI Assistant</span>
+                <h4>Smart Recommendation</h4>
+              </div>
+              <div class="ai-tip-content" id="ai-smart-tip-content">
+                Analyzing event distributions and bookings data... Let me formulate a custom savings tip for you.
+              </div>
+              <div class="ai-tip-action" id="btn-ai-refresh-tip">
+                <i class="fa-solid fa-rotate"></i> Get Next AI Tip
+              </div>
+            </div>
+            
+            <div class="card" style="background: rgba(236, 72, 153, 0.03); border-color: rgba(236, 72, 153, 0.2);">
+              <h4 style="font-family: var(--font-heading); color: var(--color-white); font-size: 1.1rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--color-pink);"></i> Quick Suggestion
+              </h4>
+              <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.2rem;">
+                Need creative concepts for an upcoming party or business gathering? Type in a custom name and let Eventra formulate branding tags.
+              </p>
+              <div class="form-group">
+                <input type="text" class="form-control" id="input-quick-ai-name" placeholder="E.g., Skyward Gala 2026">
+              </div>
+              <div class="form-group">
+                <select class="form-control" id="select-quick-ai-type">
+                  <option value="Conference">Conference</option>
+                  <option value="Wedding">Wedding</option>
+                  <option value="Concert">Concert</option>
+                  <option value="Birthday">Birthday</option>
+                  <option value="Gala">Gala</option>
+                  <option value="Seminar">Seminar</option>
+                  <option value="Exhibition">Exhibition</option>
+                </select>
+              </div>
+              <button class="btn btn-ai btn-sm" id="btn-quick-ai-submit" style="width: 100%;">
+                <i class="fa-solid fa-sparkles"></i> Formulate AI Concept
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. EVENT MANAGEMENT -->
+      <section class="view-panel" id="panel-events">
+        <div class="filter-bar">
+          <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="form-control" id="search-events-input" placeholder="Search events by name or location...">
+          </div>
+          
+          <div class="filter-group">
+            <label class="form-label" style="margin: 0; white-space: nowrap;">Type:</label>
+            <select class="form-control" id="filter-events-type" style="width: 150px; padding: 0.5rem 1rem;">
+              <option value="ALL">All Types</option>
+              <option value="Conference">Conference</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Concert">Concert</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Gala">Gala</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Exhibition">Exhibition</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="event-grid" id="events-grid-container">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- 3. GUEST MANAGEMENT -->
+      <section class="view-panel" id="panel-guests">
+        <div class="budget-hero-row" style="grid-template-columns: 1.5fr 2fr; margin-bottom: 2rem;">
+          <!-- Select Event Context -->
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label" for="select-guest-event">Active Target Event</label>
+              <select class="form-control" id="select-guest-event">
+                <!-- Dynamically populated with active events -->
+              </select>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;" id="guest-event-metrics">
+              <div style="flex: 1; text-align: center; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: var(--border-radius-md);">
+                <span style="font-size: 0.78rem; color: var(--color-text-muted);">RSVP Rate</span>
+                <h4 style="font-size: 1.5rem; color: var(--color-green); margin-top: 0.25rem;" id="guest-metric-rsvp-pct">0%</h4>
+              </div>
+              <div style="flex: 1; text-align: center; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: var(--border-radius-md);">
+                <span style="font-size: 0.78rem; color: var(--color-text-muted);">Attending</span>
+                <h4 style="font-size: 1.5rem; color: var(--color-blue); margin-top: 0.25rem;" id="guest-metric-attending">0</h4>
+              </div>
+              <div style="flex: 1; text-align: center; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: var(--border-radius-md);">
+                <span style="font-size: 0.78rem; color: var(--color-text-muted);">Pending Invites</span>
+                <h4 style="font-size: 1.5rem; color: var(--color-yellow); margin-top: 0.25rem;" id="guest-metric-pending">0</h4>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Guest Widget -->
+          <div class="card">
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-white); margin-bottom: 1rem;">Add Guest to Roster</h3>
+            <form id="form-add-guest" onsubmit="return false;">
+              <div class="form-row">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="input-guest-name" placeholder="Guest Full Name" required>
+                </div>
+                <div class="form-group">
+                  <input type="email" class="form-control" id="input-guest-email" placeholder="Email Address" required>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <select class="form-control" id="select-guest-dietary">
+                    <option value="None">No Dietary Restrictions</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Vegan">Vegan</option>
+                    <option value="Gluten-Free">Gluten-Free</option>
+                    <option value="Nut Allergy">Nut Allergy</option>
+                    <option value="Halal">Halal</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-add-guest-submit" style="height: 42px;">
+                  <i class="fa-solid fa-plus"></i> Add Guest
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table" id="guests-table">
+            <thead>
+              <tr>
+                <th>Guest Name</th>
+                <th>Email Address</th>
+                <th>Dietary Preference</th>
+                <th>Invitation Status</th>
+                <th>RSVP Status</th>
+                <th>Roster Action</th>
+              </tr>
+            </thead>
+            <tbody id="guests-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 4. BOOKING MANAGEMENT -->
+      <section class="view-panel" id="panel-bookings">
+        <div class="filter-bar">
+          <h3 style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-white);">All Operational Bookings</h3>
+          <div class="filter-group">
+            <label class="form-label" style="margin: 0; white-space: nowrap;">Event:</label>
+            <select class="form-control" id="filter-bookings-event" style="width: 200px; padding: 0.5rem 1rem;">
+              <option value="ALL">All Events</option>
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table" id="bookings-table">
+            <thead>
+              <tr>
+                <th>Booking Ref</th>
+                <th>Event Context</th>
+                <th>Service Provider</th>
+                <th>Booking Category</th>
+                <th>Cost Fee</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Operation Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. VENDOR MANAGEMENT -->
+      <section class="view-panel" id="panel-vendors">
+        <div class="filter-bar">
+          <div class="header-title-area">
+            <h3 style="font-family: var(--font-heading); font-size: 1.3rem; color: var(--color-white); margin-bottom: 0.2rem;">Eventra Approved Network</h3>
+            <p style="font-size: 0.85rem; color: var(--color-text-muted);">Direct booking integrated vendors.</p>
+          </div>
+          
+          <div class="filter-group">
+            <label class="form-label" style="margin: 0; white-space: nowrap;">Category:</label>
+            <select class="form-control" id="filter-vendors-category" style="width: 180px; padding: 0.5rem 1rem;">
+              <option value="ALL">All Services</option>
+              <option value="Venue">Venue Space</option>
+              <option value="Catering">Gourmet Catering</option>
+              <option value="Entertainment">Entertainment/DJ</option>
+              <option value="Photography">Photography & Film</option>
+              <option value="Decor">Decor & Florals</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="vendor-grid" id="vendors-grid-container">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- 6. BUDGET TRACKING -->
+      <section class="view-panel" id="panel-budget">
+        <div class="filter-bar" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+            <label class="form-label" style="margin: 0; white-space: nowrap;">Analyze Event Budget:</label>
+            <select class="form-control" id="select-budget-event" style="width: 250px;">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          
+          <button class="btn btn-ai" id="btn-budget-ai-estimate">
+            <i class="fa-solid fa-chart-line-up"></i> Estimate Budget with AI
+          </button>
+        </div>
+
+        <!-- Budget Hero Cards -->
+        <div class="budget-hero-row">
+          <div class="card">
+            <span class="stat-title">Target Budget Limit</span>
+            <div class="stat-value" id="budget-val-limit">$0</div>
+            <span style="font-size: 0.78rem; color: var(--color-text-muted);">Set target budget caps</span>
+          </div>
+          <div class="card">
+            <span class="stat-title">Committed Expenses</span>
+            <div class="stat-value" id="budget-val-committed" style="color: var(--color-pink);">$0</div>
+            <span style="font-size: 0.78rem; color: var(--color-text-muted);">Confirmed bookings + services</span>
+          </div>
+          <div class="card">
+            <span class="stat-title">Remaining Overhead</span>
+            <div class="stat-value" id="budget-val-remaining" style="color: var(--color-green);">$0</div>
+            <span style="font-size: 0.78rem; color: var(--color-text-muted);">Disposable safety reserves</span>
+          </div>
+        </div>
+
+        <!-- Budget Progress Bar Card -->
+        <div class="card budget-meter-card" style="margin-bottom: 2rem;">
+          <div class="budget-progress-container">
+            <div class="budget-progress-header">
+              <span>Budget Usage Rate</span>
+              <span id="budget-progress-percent">0% Used</span>
+            </div>
+            <div class="budget-track">
+              <div class="budget-fill" id="budget-progress-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Split Section -->
+        <div class="budget-split-grid">
+          <!-- Left Table: Category Breakdowns -->
+          <div class="card">
+            <h3 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--color-white); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-tags" style="color: var(--color-purple);"></i> Cost Allocation Breakdown
+            </h3>
+            <div class="budget-expenses-list" id="budget-category-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Right Card: AI budget advisor -->
+          <div class="card" style="background: linear-gradient(135deg, rgba(22, 17, 38, 0.6) 0%, rgba(10, 37, 64, 0.3) 100%); border-color: rgba(168, 85, 247, 0.3);">
+            <div class="ai-tip-header">
+              <span class="ai-badge">AI Advisor</span>
+              <h4>Smart Allocation Feedback</h4>
+            </div>
+            <div class="ai-tip-content" id="ai-budget-analysis-box" style="font-size: 0.85rem; line-height: 1.6;">
+              Please click "Estimate Budget with AI" or configure your event vendors to receive automated financial audits and category splits.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. SCHEDULE PLANNER -->
+      <section class="view-panel" id="panel-schedule">
+        <div class="filter-bar" style="margin-bottom: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
+            <label class="form-label" style="margin: 0; white-space: nowrap;">Event Planner Context:</label>
+            <select class="form-control" id="select-schedule-event" style="width: 250px;">
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          
+          <button class="btn btn-ai" id="btn-schedule-ai-generate">
+            <i class="fa-solid fa-compass"></i> Auto Itinerary Generator (AI)
+          </button>
+        </div>
+
+        <div class="schedule-container">
+          <!-- Timeline View -->
+          <div class="card">
+            <h3 style="font-family: var(--font-heading); font-size: 1.25rem; color: var(--color-white); display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-route" style="color: var(--color-pink);"></i> Day-of Itinerary Schedule
+            </h3>
+            <div class="timeline" id="schedule-timeline-container">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Add Schedule Slot Form -->
+          <div class="card" style="height: fit-content;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-white); margin-bottom: 1rem;">Insert Custom Slot</h3>
+            <form id="form-add-schedule" onsubmit="return false;">
+              <div class="form-group">
+                <label class="form-label" for="input-schedule-time">Itinerary Time</label>
+                <input type="text" class="form-control" id="input-schedule-time" placeholder="E.g., 10:30 AM" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="input-schedule-title">Slot Title</label>
+                <input type="text" class="form-control" id="input-schedule-title" placeholder="E.g., Welcome Keynote" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="input-schedule-desc">Brief Activity Detail</label>
+                <textarea class="form-control" id="input-schedule-desc" rows="3" placeholder="Describe the segment..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btn-add-schedule-submit" style="width: 100%;">
+                <i class="fa-solid fa-plus"></i> Add Slot
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. REPORTS SECTION -->
+      <section class="view-panel" id="panel-reports">
+        <div class="charts-grid" style="margin-bottom: 2rem;">
+          <!-- 1. Revenue Trends -->
+          <div class="card chart-card">
+            <div class="section-header-compact">
+              <h3>Financial Budget Allocation Overview</h3>
+            </div>
+            <div class="chart-wrapper-canvas">
+              <canvas id="chart-revenue-trends"></canvas>
+            </div>
+          </div>
+
+          <!-- 2. RSVP Doughnut -->
+          <div class="card chart-card">
+            <div class="section-header-compact">
+              <h3>RSVP Response Distributions</h3>
+            </div>
+            <div class="chart-wrapper-canvas">
+              <canvas id="chart-rsvp-distribution"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-grid charts-grid-full">
+          <!-- 3. Event Types Bar -->
+          <div class="card chart-card" style="min-height: 380px;">
+            <div class="section-header-compact">
+              <h3>Event Operations Classification</h3>
+            </div>
+            <div class="chart-wrapper-canvas" style="height: 280px;">
+              <canvas id="chart-types-distribution"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CREATE EVENT MODAL OVERLAY -->
+  <div class="modal-overlay" id="modal-create-event">
+    <div class="card modal-card">
+      <div class="modal-header">
+        <h3>Configure New Event</h3>
+        <button class="modal-close" id="btn-close-create-event-modal">&times;</button>
+      </div>
+      <form id="form-create-event" onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label" for="input-modal-name">Event Name</label>
+          <input type="text" class="form-control" id="input-modal-name" placeholder="E.g., VeloTech Innovation Summit" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="select-modal-type">Event Type</label>
+            <select class="form-control" id="select-modal-type" required>
+              <option value="Conference">Conference</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Concert">Concert</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Gala">Gala</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Exhibition">Exhibition</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-modal-date">Event Date</label>
+            <input type="date" class="form-control" id="input-modal-date" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-modal-location">Location / Venue</label>
+          <input type="text" class="form-control" id="input-modal-location" placeholder="E.g., Grand Plaza Hall, Dallas" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="input-modal-guests">Guest Limit</label>
+            <input type="number" class="form-control" id="input-modal-guests" placeholder="E.g., 250" min="1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-modal-budget">Target Budget ($)</label>
+            <input type="number" class="form-control" id="input-modal-budget" placeholder="E.g., 50000" min="1" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Vendor Partnership Selection</label>
+          <div class="multi-select-container" id="container-modal-vendors">
+            <!-- Dynamically populated from DEFAULT_VENDORS -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-modal-cancel-event">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-modal-save-event">Save Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR AI SUGGESTIONS DRAWER -->
+  <div class="ai-panel" id="panel-ai-drawer">
+    <div class="ai-panel-header">
+      <h3><i class="fa-solid fa-wand-magic-sparkles"></i> AI Branding Lab</h3>
+      <button class="ai-panel-close" id="btn-close-ai-panel">&times;</button>
+    </div>
+    
+    <div style="flex-grow: 1;">
+      <p style="font-size: 0.85rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: 1.5rem;" id="ai-drawer-intro-text">
+        Custom promotional branding and theme layouts optimized for your event.
+      </p>
+
+      <div class="ai-result-section">
+        <h4>Simulated Target Event</h4>
+        <div class="ai-result-text" id="ai-drawer-event-name" style="font-weight: 700; color: var(--color-white); font-size: 1.05rem;">
+          Loading event metadata...
+        </div>
+      </div>
+
+      <div class="ai-result-section">
+        <h4>AI Generated Tagline</h4>
+        <div class="ai-result-text" id="ai-drawer-tagline">
+          Generating tagline...
+        </div>
+      </div>
+
+      <div class="ai-result-section">
+        <h4>Theme Aesthetics</h4>
+        <div class="ai-result-text" id="ai-drawer-theme">
+          Analyzing styles...
+        </div>
+      </div>
+
+      <div class="ai-result-section">
+        <h4>Color Theme Palette</h4>
+        <div class="theme-swatch-container" id="ai-drawer-colors">
+          <!-- Dynamically filled with color block divs -->
+        </div>
+      </div>
+
+      <div class="ai-result-section">
+        <h4>Suggested Engagement Actions</h4>
+        <div class="ai-result-text" id="ai-drawer-activities">
+          Building games...
+        </div>
+      </div>
+
+      <div class="ai-result-section" style="border-color: rgba(16, 185, 129, 0.3);">
+        <h4 style="color: var(--color-green);">Smart Budget Advice</h4>
+        <div class="ai-result-text" id="ai-drawer-budget-tip">
+          Estimating saves...
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 2rem;">
+      <button class="btn btn-ai" id="btn-regenerate-ai-drawer" style="width: 100%;">
+        <i class="fa-solid fa-sync"></i> Re-Formulate Aesthetics
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Controller Entrypoint -->
+  <script src="js/data.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
